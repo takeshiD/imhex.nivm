@@ -1,5 +1,9 @@
+---@class ImHexFormatView
 local M = {}
 
+---@param lines string[]
+---@param level integer
+---@return string[]
 local function indent_lines(lines, level)
   local pad = string.rep("  ", level)
   local out = {}
@@ -9,6 +13,9 @@ local function indent_lines(lines, level)
   return out
 end
 
+---@param tbl table
+---@param level integer|nil
+---@return string[]
 local function render_table(tbl, level)
   level = level or 0
   local lines = {}
@@ -33,6 +40,8 @@ local function render_table(tbl, level)
   return lines
 end
 
+---@param buf integer
+---@param decoded string|string[]|table
 M.render = function(buf, decoded)
   local lines
   if type(decoded) == "string" then

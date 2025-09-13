@@ -6,6 +6,24 @@ local Decode = require "imhex.formatdecode"
 
 local M = {}
 
+---@class ImHexWins
+---@field hex integer|nil
+---@field ascii integer|nil
+---@field format integer|nil
+
+---@class ImHexBufs
+---@field hex integer|nil
+---@field ascii integer|nil
+---@field format integer|nil
+
+---@class ImHexLayoutState
+---@field path string|nil
+---@field bytes string|nil
+---@field wins ImHexWins
+---@field bufs ImHexBufs
+---@field tab integer|nil
+
+---@type ImHexLayoutState
 local state = {
   path = nil,
   bytes = nil,
@@ -14,6 +32,8 @@ local state = {
   tab = nil,
 }
 
+---@param filetype? string
+---@return integer
 local function create_scratch_buffer(filetype)
   local buf = vim.api.nvim_create_buf(false, true)
   if filetype then
@@ -22,6 +42,9 @@ local function create_scratch_buffer(filetype)
   return buf
 end
 
+---@param path string
+---@return string|nil data
+---@return string? err
 local function read_all_bytes(path)
   local fd = vim.loop.fs_open(path, "r", 438) -- 0666
   if not fd then
@@ -36,6 +59,7 @@ local function read_all_bytes(path)
   return data
 end
 
+---@return nil
 local function ensure_layout()
   local cfg = Config.get()
 
@@ -77,6 +101,7 @@ local function ensure_layout()
   vim.api.nvim_win_set_width(state.wins.hex, hex_w)
 end
 
+---@return nil
 local function render_all()
   local cfg = Config.get()
   HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
@@ -91,6 +116,7 @@ local function render_all()
   FormatView.render(state.bufs.format, result)
 end
 
+---@param path string
 M.open = function(path)
   if not path or path == "" then
     vim.notify("[imhex] No file path provided", vim.log.levels.ERROR)
@@ -107,6 +133,7 @@ M.open = function(path)
   render_all()
 end
 
+---@return nil
 M.close = function()
   if state.tab and vim.api.nvim_tabpage_is_valid(state.tab) then
     vim.cmd "tabclose"
@@ -120,6 +147,7 @@ M.close = function()
   }
 end
 
+---@param which 'hex'|'ascii'|'format'
 M.toggle = function(which)
   local win = state.wins[which]
   if not win or not vim.api.nvim_win_is_valid(win) then

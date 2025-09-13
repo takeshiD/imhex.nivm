@@ -1,5 +1,24 @@
+---@class ImHexUiConfig
+---@field top_ratio number  -- top area (hex+ascii) height ratio
+---@field column_ratio number  -- hex:ascii width ratio
+---@field bytes_per_row integer
+---@field show_ascii boolean
+---@field show_hex boolean
+---@field show_format boolean
+
+---@class ImHexDecodeConfig
+---@field prefer string[]  -- order matters; first matching decoder wins
+
+---@class ImHexConfig
+---@field ui ImHexUiConfig
+---@field decode ImHexDecodeConfig
+
+---@class ImHexConfigState
+---@field config ImHexConfig
+
 local M = {}
 
+---@type ImHexConfig
 local defaults = {
   ui = {
     top_ratio = 0.7, -- top area (hex+ascii) height ratio
@@ -15,10 +34,15 @@ local defaults = {
   },
 }
 
+---@type ImHexConfigState
 local state = {
   config = vim.deepcopy(defaults),
 }
 
+---@generic T: table
+---@param dst T
+---@param src T|nil
+---@return T
 local function deep_merge(dst, src)
   for k, v in pairs(src or {}) do
     if type(v) == "table" and type(dst[k]) == "table" then
@@ -30,10 +54,12 @@ local function deep_merge(dst, src)
   return dst
 end
 
+---@param opts? ImHexConfig
 M.setup = function(opts)
   state.config = deep_merge(vim.deepcopy(defaults), opts or {})
 end
 
+---@return ImHexConfig
 M.get = function()
   return state.config
 end

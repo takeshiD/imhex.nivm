@@ -1,5 +1,8 @@
+---@class MyPluginHealth
 local M = {}
 
+---Run health checks for myplugin
+---@return nil
 function M.check()
   vim.health.start("myplugin")
 
@@ -18,4 +21,3 @@ function M.check()
 end
 
 return M
-

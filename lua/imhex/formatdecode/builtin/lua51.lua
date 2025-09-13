@@ -1,5 +1,23 @@
+---@class ImHexLua51HeaderFields
+---@field format integer
+---@field endianness string
+---@field sizeof_int integer
+---@field sizeof_size_t integer
+---@field sizeof_instruction integer
+---@field sizeof_lua_Number integer
+---@field lua_Number_integral boolean
+
+---@class ImHexLua51DecodeResult
+---@field format string
+---@field signature string
+---@field version string
+---@field header ImHexLua51HeaderFields
+---@field note string
+
 local M = {}
 
+---@param bytes string
+---@return boolean
 local function is_lua51(bytes)
   if #bytes < 12 then
     return false
@@ -15,13 +33,18 @@ local function is_lua51(bytes)
   return true
 end
 
+---@param bytes string
+---@return ImHexLua51DecodeResult
 local function decode_header(bytes)
   local off = 1
+  ---@return integer
   local function read_u8()
     local v = bytes:byte(off)
     off = off + 1
     return v
   end
+  ---@param n integer
+  ---@return integer[]
   local function read_sig(n)
     local s = { bytes:byte(off, off + n - 1) }
     off = off + n
@@ -55,6 +78,7 @@ local function decode_header(bytes)
   }
 end
 
+---@param Decode table  -- expects Decode.register(name, matcher, decoder)
 function M.register(Decode)
   Decode.register("lua51", is_lua51, function(bytes)
     return decode_header(bytes)

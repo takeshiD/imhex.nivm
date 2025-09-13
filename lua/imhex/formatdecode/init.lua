@@ -1,17 +1,26 @@
 local Config = require "imhex.config"
 
+---@alias ImHexDecoded table|string
+
+---@class ImHexDecoder
+---@field name string
+---@field match fun(bytes: string, path: string): boolean
+---@field decode fun(bytes: string, path: string): ImHexDecoded
+
 local M = {}
 
+---@type ImHexDecoder[]
 local registry = {}
 
--- Register a decoder
--- name: string
--- matcher: function(bytes, path) -> boolean
--- decoder: function(bytes, path) -> table|string (decoded result)
+--- Register a decoder
+---@param name string
+---@param matcher fun(bytes: string, path: string): boolean
+---@param decoder fun(bytes: string, path: string): ImHexDecoded
 M.register = function(name, matcher, decoder)
   registry[#registry + 1] = { name = name, match = matcher, decode = decoder }
 end
 
+---@return string[]
 M.list = function()
   local names = {}
   for _, d in ipairs(registry) do
@@ -20,6 +29,9 @@ M.list = function()
   return names
 end
 
+---@param path string
+---@param bytes string
+---@return ImHexDecoder|nil
 local function pick_decoder(path, bytes)
   local cfg = Config.get()
   -- First, try preferred decoders if they match
@@ -42,6 +54,9 @@ local function pick_decoder(path, bytes)
   return nil
 end
 
+---@param path string
+---@param bytes string
+---@return ImHexDecoded
 M.decode = function(path, bytes)
   local d = pick_decoder(path, bytes)
   if not d then

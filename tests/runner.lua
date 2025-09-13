@@ -2,10 +2,13 @@
 
 local uv = vim.loop
 
+---@param name string
+---@return boolean
 local function is_test_file(name)
   return name:match("^test_.*%.lua$") ~= nil
 end
 
+---@return string[]
 local function scan_tests()
   local dir = "tests"
   local entries = {}
@@ -37,4 +40,3 @@ end
 
 -- run them
 require("tests.harness").run()
-

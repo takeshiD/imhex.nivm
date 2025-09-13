@@ -1,10 +1,12 @@
+---@class ImHex
 local M = {}
 
 local Config = require "imhex.config"
 local UI = require "imhex.ui"
 local Decode = require "imhex.formatdecode"
 
--- Public setup entrypoint
+--- Public setup entrypoint
+---@param opts? ImHexConfig
 M.setup = function(opts)
   Config.setup(opts)
 

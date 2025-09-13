@@ -1,11 +1,22 @@
+---@class TestCase
+---@field name string
+---@field fn fun()
+
+---@class Harness
+---@field cases TestCase[]
 local M = {}
 
+---@type TestCase[]
 M.cases = {}
 
+---@param name string
+---@param fn fun()
 function M.testcase(name, fn)
   table.insert(M.cases, { name = name, fn = fn })
 end
 
+---@param v any
+---@return string
 local function as_str(v)
   if type(v) == "string" then
     return v
@@ -16,18 +27,26 @@ local function as_str(v)
   return tostring(v)
 end
 
+---@param cond boolean
+---@param msg? string
 function M.assert_true(cond, msg)
   if not cond then
     error(msg or "assert_true failed")
   end
 end
 
+---@param a any
+---@param b any
+---@param msg? string
 function M.assert_eq(a, b, msg)
   if a ~= b then
     error((msg and (msg .. "\n") or "") .. "expected ==, got\nleft: " .. as_str(a) .. "\nright: " .. as_str(b))
   end
 end
 
+---@param s string
+---@param pat string
+---@param msg? string
 function M.assert_match(s, pat, msg)
   if type(s) ~= "string" then
     error("assert_match: not a string: " .. as_str(s))
@@ -37,6 +56,7 @@ function M.assert_match(s, pat, msg)
   end
 end
 
+---@return nil
 function M.run()
   local passed, failed = 0, 0
   for _, c in ipairs(M.cases) do
@@ -61,4 +81,3 @@ function M.run()
 end
 
 return M
-

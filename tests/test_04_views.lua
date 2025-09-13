@@ -4,6 +4,7 @@ local HexView = require("imhex.ui.view_hex")
 local AsciiView = require("imhex.ui.view_ascii")
 local FormatView = require("imhex.ui.view_format")
 
+---@return integer
 local function new_scratch()
   return vim.api.nvim_create_buf(false, true)
 end
@@ -37,4 +38,3 @@ t.testcase("format view: renders table and string inputs", function()
   t.assert_eq(l2[1], "line1")
   t.assert_eq(l2[2], "line2")
 end)
-

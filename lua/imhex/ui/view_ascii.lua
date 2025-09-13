@@ -1,5 +1,8 @@
+---@class ImHexAsciiView
 local M = {}
 
+---@param byte integer
+---@return string
 local function to_ascii(byte)
   if byte >= 32 and byte <= 126 then
     return string.char(byte)
@@ -8,6 +11,9 @@ local function to_ascii(byte)
   end
 end
 
+---@param bytes string
+---@param bytes_per_row integer
+---@return string[]
 local function build_lines(bytes, bytes_per_row)
   local lines = {}
   local len = #bytes
@@ -29,6 +35,9 @@ local function build_lines(bytes, bytes_per_row)
   return lines
 end
 
+---@param buf integer
+---@param bytes string|nil
+---@param opts ImHexRenderOpts|nil
 M.render = function(buf, bytes, opts)
   local bpr = (opts and opts.bytes_per_row) or 16
   local lines = build_lines(bytes or "", bpr)
