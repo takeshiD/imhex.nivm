@@ -1,7 +1,7 @@
----@class ImHexUI
+---@class UndumpUI
 local M = {}
 
-local layout = require('imhex.ui.layout')
+local layout = require "undump.ui.layout"
 
 ---@param path string
 M.open = function(path)
@@ -15,17 +15,17 @@ end
 
 ---@return nil
 M.toggle_hex = function()
-    layout.toggle('hex')
+    layout.toggle "hex"
 end
 
 ---@return nil
 M.toggle_ascii = function()
-    layout.toggle('ascii')
+    layout.toggle "ascii"
 end
 
 ---@return nil
 M.toggle_format = function()
-    layout.toggle('format')
+    layout.toggle "format"
 end
 
 return M

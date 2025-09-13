@@ -8,3 +8,4 @@ doc/tags
 /.luarc.json
 .nvimlog
 .serena
+.dependencies
