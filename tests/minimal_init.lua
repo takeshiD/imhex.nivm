@@ -1,25 +1,15 @@
--- Minimal init for headless testing
--- Sets up runtimepath and package.path to load the plugin from this repo
+local plenary_dir = vim.fs.joinpath(
+    vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h"),
+    ".dependencies/plenary.nvim"
+)
+if vim.fn.isdirectory(plenary_dir) == 0 then
+    vim.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/nvim-lua/plenary.nvim",
+        plenary_dir,
+    }):wait()
+end
 
-local cwd = vim.fn.getcwd()
-
--- Keep our repo at the front of runtimepath so plugin/ loads if needed
-vim.opt.runtimepath:prepend(cwd)
-
--- Make Lua modules under lua/ discoverable
-package.path = table.concat({
-    cwd .. "/lua/?.lua",
-    cwd .. "/lua/?/init.lua",
-    cwd .. "/tests/?.lua",
-    cwd .. "/tests/?/init.lua",
-    package.path,
-}, ";")
-
--- Reduce noise and avoid external providers
-vim.g.loaded_python_provider = 0
-vim.g.loaded_python3_provider = 0
-vim.g.loaded_ruby_provider = 0
-vim.g.loaded_perl_provider = 0
-
-vim.o.swapfile = false
-vim.o.shadafile = ""
+vim.opt.rtp:append(plenary_dir)
