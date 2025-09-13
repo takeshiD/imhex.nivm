@@ -1,8 +1,8 @@
 local t = require("tests.harness")
 
-local HexView = require("imhex.ui.view_hex")
-local AsciiView = require("imhex.ui.view_ascii")
-local FormatView = require("imhex.ui.view_format")
+local HexView = require("undump.ui.view_hex")
+local AsciiView = require("undump.ui.view_ascii")
+local FormatView = require("undump.ui.view_format")
 
 ---@return integer
 local function new_scratch()

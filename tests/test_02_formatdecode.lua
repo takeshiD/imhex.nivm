@@ -1,6 +1,6 @@
 local t = require("tests.harness")
-local Config = require("imhex.config")
-local Decode = require("imhex.formatdecode")
+local Config = require("undump.config")
+local Decode = require("undump.formatdecode")
 
 t.testcase("formatdecode: fallback when no decoders", function()
   -- Reset config to defaults; registry is empty at process start
