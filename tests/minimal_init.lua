@@ -8,11 +8,11 @@ vim.opt.runtimepath:prepend(cwd)
 
 -- Make Lua modules under lua/ discoverable
 package.path = table.concat({
-  cwd .. "/lua/?.lua",
-  cwd .. "/lua/?/init.lua",
-  cwd .. "/tests/?.lua",
-  cwd .. "/tests/?/init.lua",
-  package.path,
+    cwd .. "/lua/?.lua",
+    cwd .. "/lua/?/init.lua",
+    cwd .. "/tests/?.lua",
+    cwd .. "/tests/?/init.lua",
+    package.path,
 }, ";")
 
 -- Reduce noise and avoid external providers
@@ -23,4 +23,3 @@ vim.g.loaded_perl_provider = 0
 
 vim.o.swapfile = false
 vim.o.shadafile = ""
-
