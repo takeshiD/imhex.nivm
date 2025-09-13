@@ -6,4 +6,5 @@ doc/tags
 /.idea
 /.vscode
 /.luarc.json
-
+.nvimlog
+.serena
