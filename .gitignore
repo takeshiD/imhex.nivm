@@ -1,0 +1,9 @@
+doc/tags
+.DS_Store
+*.log
+/.repro
+/.nvim
+/.idea
+/.vscode
+/.luarc.json
+

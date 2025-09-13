@@ -1,0 +1,40 @@
+*myplugin.txt*    Minimal Lua Neovim plugin starter                *myplugin*
+
+Author: Your Name <you@example.com>
+License: Choose a license and add LICENSE file
+
+=============================================================================
+CONTENTS                                                     *myplugin-contents*
+
+  1. Introduction ................................. |myplugin-introduction|
+  2. Commands ..................................... |myplugin-commands|
+  3. Setup ........................................ |myplugin-setup|
+
+=============================================================================
+INTRODUCTION                                            *myplugin-introduction*
+
+myplugin.nvim is a minimal Lua Neovim plugin starter.
+
+=============================================================================
+COMMANDS                                                  *myplugin-commands*
+
+                                                      *:MyPluginHello*
+:MyPluginHello
+    Show a hello notification via |vim.notify()|.
+
+=============================================================================
+SETUP                                                        *myplugin-setup*
+
+>lua
+    require('myplugin').setup({
+      -- option = true,
+    })
+<
+
+After editing this file, run:
+>
+    :helptags doc
+<
+
+vim:tw=78:ts=8:noet:ft=help:norl:
+
