@@ -17,11 +17,6 @@ undump.nvim is a neovim plugin for binary editor and format decoder.
 }
 ```
 
-2. Restart Neovim, then try:
-
-   - `:MyPluginHello` — shows a hello notification
-   - `:checkhealth myplugin` — runs basic health checks
-
 # Builtin Decoder
 | Name     | Status      |
 | -------- | --------    |
@@ -38,9 +33,6 @@ undump.nvim is a neovim plugin for binary editor and format decoder.
 # Custom Decoder
 You create custome decoder.
 
-```lua
-
-```
 
 ## License
 This project is licensed under the MIT License.  
