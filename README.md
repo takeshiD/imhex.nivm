@@ -1,47 +1,47 @@
-# myplugin.nvim
+# undump.nvim
 
-Minimal Lua-based Neovim plugin starter.
+undump.nvim is a neovim plugin for binary editor and format decoder.
 
-## Features
+# Features
 
-- `lua/myplugin/` module with `setup()` and example function
-- `plugin/myplugin.lua` auto-load on startup (creates `:MyPluginHello`)
-- `doc/myplugin.txt` Vim help skeleton (run `:helptags doc`)
-- `health/myplugin.lua` for `:checkhealth myplugin`
-- `stylua.toml` for code formatting
+- View binary file
+- Edit binary file
+- Format decode specified or infered pattern 
 
-## Quick Start
-
-1. Install with your plugin manager (example: lazy.nvim):
-
-   ```lua
-   {
-     "yourname/myplugin.nvim",
-     config = function()
-       require("myplugin").setup({})
-     end,
-   }
-   ```
+# Installation
+## `lazy.nvim` 
+```lua
+{
+   "takeshid/undump.nvim",
+   config = require("undump").setup()
+}
+```
 
 2. Restart Neovim, then try:
 
    - `:MyPluginHello` — shows a hello notification
    - `:checkhealth myplugin` — runs basic health checks
 
-## Rename The Plugin
+# Builtin Decoder
+| Name     | Status      |
+| -------- | --------    |
+| Lua51    | ☑ Suppurted |
+| Lua52    | Planned     |
+| Lua53    | Planned     |
+| Lua54    | Planned     |
+| LuaJIT   | Planned     |
+| zip      | Planned     |
+| vhdx     | Planned     |
+| pcap     | Planned     |
+| elf      | Planned     |
 
-If you want a different module name:
+# Custom Decoder
+You create custome decoder.
 
-- Rename directory `lua/myplugin/` to `lua/<newname>/`
-- Rename file `plugin/myplugin.lua` to `plugin/<newname>.lua`
-- Replace `myplugin` occurrences in the repo (module name, docs, commands)
+```lua
 
-## Development
-
-- Format with `stylua`: `stylua .`
-- Update help tags after editing `doc/myplugin.txt`: `:helptags doc`
+```
 
 ## License
-
-Choose a license and add it to the repository (e.g. MIT). This starter ships without a license file by default.
-
+This project is licensed under the MIT License.  
+See [LICENSE](./License)  
