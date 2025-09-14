@@ -106,11 +106,12 @@ M.highlight = function(buf, decoded, opts)
         vim.hl.range(buf, NS_HEX, hl, { row, col }, { row, col + span })
     end
 
+    local start = 1
+    local hl_num = 1
     for _, r in ipairs(ranges) do
-        local start = r.start
         local len = r.length
-        local hl = r.hl
-        if start and len and len > 0 then
+        local hl = string.format("UndumpHexSignature%d", hl_num)
+        if len > 0 then
             for i = 0, len - 1 do
                 if i == len - 1 then
                     add_byte_hl(start + i, 2, hl)
@@ -119,6 +120,8 @@ M.highlight = function(buf, decoded, opts)
                 end
             end
         end
+        start = start + len
+        hl_num = ((hl_num + 1) % 7) + 1
     end
 end
 

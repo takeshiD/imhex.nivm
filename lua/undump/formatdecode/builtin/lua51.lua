@@ -81,10 +81,17 @@ local function decode_header(bytes)
     -- Lua 5.1 header layout (so far parsed):
     -- 1..4: signature, 5: version, 6: format, 7: endianness, 8: sizeof(int), 9: sizeof(size_t),
     -- 10: sizeof(Instruction), 11: sizeof(lua_Number), 12: integral flag
+    -- stylua: ignore
     result._undump_ranges = {
-        { name = "signature", start = 1, length = 4, hl = "UndumpHexSignature1" },
-        { name = "version", start = 5, length = 2, hl = "UndumpHexSignature2" },
-        { name = "header", start = 7, length = 12, hl = "UndumpHexSignature3" },
+        { name = "signature",     length = 4 },
+        { name = "version",       length = 1 },
+        { name = "format",        length = 1 },
+        { name = "endian",        length = 1 },
+        { name = "size_int",      length = 1 },
+        { name = "size_size_t",   length = 1 },
+        { name = "size_instr",    length = 1 },
+        { name = "size_lua_num",  length = 1 },
+        { name = "integral_flag", length = 1 },
     }
 
     return result

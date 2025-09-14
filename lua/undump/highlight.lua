@@ -1,6 +1,7 @@
 ---@class UndumpHighlight
 local M = {}
 
+-- stylua: ignore
 M.highlights = {
     HEX_SIGNATURE1 = { name = "UndumpHexSignature1", bg = "#FF5995" },
     HEX_SIGNATURE4 = { name = "UndumpHexSignature2", bg = "#B6E354" },
