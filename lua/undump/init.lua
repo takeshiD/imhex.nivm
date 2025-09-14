@@ -1,9 +1,9 @@
 ---@class Undump
 local M = {}
 
-local Config = require "undump.config"
-local UI = require "undump.ui"
-local Decode = require "undump.formatdecode"
+local Config = require("undump.config")
+local UI = require("undump.ui")
+local Decode = require("undump.formatdecode")
 
 --- Public setup entrypoint
 ---@param opts? UndumpConfig

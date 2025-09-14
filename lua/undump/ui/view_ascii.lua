@@ -29,7 +29,6 @@ local function build_lines(bytes, bytes_per_row)
             end
         end
         local addr = string.format("%08X", offset)
-        -- lines[#lines + 1] = addr .. "  " .. table.concat(row_chars)
         lines[#lines + 1] = table.concat(row_chars)
         offset = offset + bytes_per_row
     end

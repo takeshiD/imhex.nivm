@@ -29,11 +29,15 @@ local function render_table(tbl, level)
         end
     else
         for k, v in pairs(tbl) do
-            if type(v) == "table" then
-                lines[#lines + 1] = tostring(k) .. ": "
-                vim.list_extend(lines, indent_lines(render_table(v, level + 1), 1))
-            else
-                lines[#lines + 1] = tostring(k) .. ": " .. tostring(v)
+            local ks = tostring(k)
+            -- skip internal/metadata keys
+            if ks:sub(1, 1) ~= "_" then
+                if type(v) == "table" then
+                    lines[#lines + 1] = ks .. ": "
+                    vim.list_extend(lines, indent_lines(render_table(v, level + 1), 1))
+                else
+                    lines[#lines + 1] = ks .. ": " .. tostring(v)
+                end
             end
         end
     end

@@ -1,9 +1,10 @@
-local Config = require "undump.config"
+local Notify = require("undump.notify")
+local Config = require("undump.config")
 
-local HexView = require "undump.ui.view_hex"
-local AsciiView = require "undump.ui.view_ascii"
-local FormatView = require "undump.ui.view_format"
-local Decode = require "undump.formatdecode"
+local HexView = require("undump.ui.view_hex")
+local AsciiView = require("undump.ui.view_ascii")
+local FormatView = require("undump.ui.view_format")
+local Decode = require("undump.formatdecode")
 
 local M = {}
 
@@ -38,7 +39,6 @@ local state = {
 local function create_scratch_buffer(filetype)
     local buf = vim.api.nvim_create_buf(false, true)
     if filetype then
-        -- vim.api.nvim_buf_set_option(buf, "filetype", filetype)
         vim.api.nvim_set_option_value("filetype", filetype, { buf = buf })
     end
     return buf
@@ -69,19 +69,19 @@ local function ensure_layout()
     local cfg = Config.get()
 
     -- Create a new tabpage to isolate layout
-    vim.cmd "tabnew"
+    vim.cmd("tabnew")
     state.tab = vim.api.nvim_get_current_tabpage()
     local root = vim.api.nvim_get_current_win()
 
     -- bottom split for format view (spans full width)
-    vim.cmd "belowright split"
+    vim.cmd("belowright split")
     local win_bottom = vim.api.nvim_get_current_win()
 
     -- go to top (original root) and split vertically into hex + ascii
     vim.api.nvim_set_current_win(root)
-    vim.cmd "wincmd h"
+    vim.cmd("wincmd h")
     local win_ascii = vim.api.nvim_get_current_win()
-    vim.cmd "vsplit"
+    vim.cmd("vsplit")
     local win_hex = vim.api.nvim_get_current_win()
 
     state.wins.ascii = win_ascii
@@ -89,9 +89,9 @@ local function ensure_layout()
     state.wins.format = win_bottom
 
     -- assign buffers
-    state.bufs.ascii = create_scratch_buffer "undumpascii"
-    state.bufs.hex = create_scratch_buffer "undumphex"
-    state.bufs.format = create_scratch_buffer "undumpformat"
+    state.bufs.ascii = create_scratch_buffer("undumpascii")
+    state.bufs.hex = create_scratch_buffer("undumphex")
+    state.bufs.format = create_scratch_buffer("undumpformat")
     vim.api.nvim_win_set_buf(state.wins.hex, state.bufs.hex)
     vim.api.nvim_win_set_buf(state.wins.ascii, state.bufs.ascii)
     vim.api.nvim_win_set_buf(state.wins.format, state.bufs.format)
@@ -110,27 +110,36 @@ end
 ---@return nil
 local function render_all()
     local cfg = Config.get()
-    AsciiView.render(state.bufs.ascii, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
-    HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
 
+    -- Decode first so we can use the result to highlight the hex view
     local ok, result = pcall(function()
         return Decode.decode(state.path, state.bytes)
     end)
     if not ok then
         result = { "Decode error: " .. tostring(result) }
     end
+
+    -- Render byte views
+    AsciiView.render(state.bufs.ascii, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
+    HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
+    -- Apply highlights to hex view based on decoded metadata (if available)
+    if HexView.highlight then
+        Notify.warn("attempt to apply highlight")
+        HexView.highlight(state.bufs.hex, result, { bytes_per_row = cfg.ui.bytes_per_row })
+    end
+    -- Render structured decode result
     FormatView.render(state.bufs.format, result)
 end
 
 ---@param path string
 M.open = function(path)
     if not path or path == "" then
-        vim.notify("[undump.nvim] No file path provided", vim.log.levels.ERROR)
+        Notify.error("No file path provided %s", path)
         return
     end
     local bytes, err = read_all_bytes(path)
     if not bytes then
-        vim.notify("[undump.nvim] " .. err, vim.log.levels.ERROR)
+        Notify.error("%s", err)
         return
     end
     state.path = path
@@ -142,7 +151,7 @@ end
 ---@return nil
 M.close = function()
     if state.tab and vim.api.nvim_tabpage_is_valid(state.tab) then
-        vim.cmd "tabclose"
+        vim.cmd("tabclose")
     end
     state = {
         path = nil,

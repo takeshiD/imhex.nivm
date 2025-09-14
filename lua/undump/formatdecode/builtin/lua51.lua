@@ -61,7 +61,7 @@ local function decode_header(bytes)
     local size_lua_num = read_u8()
     local integral_flag = read_u8()
 
-    return {
+    local result = {
         format = "Lua bytecode",
         signature = string.format("0x%02X 0x%02X 0x%02X 0x%02X", sig[1], sig[2], sig[3], sig[4]),
         version = string.format("0x%02X (%d.%d)", version, math.floor(version / 16), version % 16),
@@ -76,6 +76,18 @@ local function decode_header(bytes)
         },
         note = "Only header parsed for Lua 5.1",
     }
+
+    -- Byte ranges for highlighting in views
+    -- Lua 5.1 header layout (so far parsed):
+    -- 1..4: signature, 5: version, 6: format, 7: endianness, 8: sizeof(int), 9: sizeof(size_t),
+    -- 10: sizeof(Instruction), 11: sizeof(lua_Number), 12: integral flag
+    result._undump_ranges = {
+        { name = "signature", start = 1, length = 4, hl = "UndumpHexSignature1" },
+        { name = "version", start = 5, length = 2, hl = "UndumpHexSignature2" },
+        { name = "header", start = 7, length = 12, hl = "UndumpHexSignature3" },
+    }
+
+    return result
 end
 
 ---@param Decode table  -- expects Decode.register(name, matcher, decoder)
