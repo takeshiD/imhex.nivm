@@ -12,8 +12,10 @@ undump.nvim is a neovim plugin for binary editor and format decoder.
 ## `lazy.nvim` 
 ```lua
 {
-   "takeshid/undump.nvim",
-   config = require("undump").setup()
+    "takeshid/undump.nvim",
+    config = function()
+        require("undump").setup()
+    end
 }
 ```
 

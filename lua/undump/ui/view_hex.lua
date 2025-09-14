@@ -40,9 +40,10 @@ end
 M.render = function(buf, bytes, opts)
     local bpr = (opts and opts.bytes_per_row) or 16
     local lines = build_lines(bytes or "", bpr)
-    vim.api.nvim_buf_set_option(buf, "modifiable", true)
+    -- ensure buffer can be updated (use buf-local API for compatibility)
+    vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.api.nvim_buf_set_option(buf, "modifiable", false)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
 end
 
 return M

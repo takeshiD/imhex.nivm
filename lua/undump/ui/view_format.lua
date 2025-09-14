@@ -19,7 +19,7 @@ end
 local function render_table(tbl, level)
     level = level or 0
     local lines = {}
-    if vim.tbl_islist(tbl) then
+    if vim.islist(tbl) then
         for _, v in ipairs(tbl) do
             if type(v) == "table" then
                 vim.list_extend(lines, render_table(v, level))
@@ -54,9 +54,9 @@ M.render = function(buf, decoded)
     if #lines == 0 then
         lines = { "[no decoded data]" }
     end
-    vim.api.nvim_buf_set_option(buf, "modifiable", true)
+    vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.api.nvim_buf_set_option(buf, "modifiable", false)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
 end
 
 return M

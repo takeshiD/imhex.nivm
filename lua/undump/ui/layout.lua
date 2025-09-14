@@ -38,7 +38,8 @@ local state = {
 local function create_scratch_buffer(filetype)
     local buf = vim.api.nvim_create_buf(false, true)
     if filetype then
-        vim.api.nvim_buf_set_option(buf, "filetype", filetype)
+        -- vim.api.nvim_buf_set_option(buf, "filetype", filetype)
+        vim.api.nvim_set_option_value("filetype", filetype, { buf = buf })
     end
     return buf
 end
@@ -52,6 +53,9 @@ local function read_all_bytes(path)
         return nil, "failed to open: " .. path
     end
     local stat = vim.loop.fs_fstat(fd)
+    if not stat then
+        return nil, "not found: " .. path
+    end
     local data = vim.loop.fs_read(fd, stat.size, 0)
     vim.loop.fs_close(fd)
     if not data then
@@ -75,29 +79,30 @@ local function ensure_layout()
 
     -- go to top (original root) and split vertically into hex + ascii
     vim.api.nvim_set_current_win(root)
-    vim.cmd "vsplit"
-    local win_ascii = vim.api.nvim_get_current_win()
     vim.cmd "wincmd h"
+    local win_ascii = vim.api.nvim_get_current_win()
+    vim.cmd "vsplit"
     local win_hex = vim.api.nvim_get_current_win()
 
-    state.wins.hex = win_hex
     state.wins.ascii = win_ascii
+    state.wins.hex = win_hex
     state.wins.format = win_bottom
 
     -- assign buffers
-    state.bufs.hex = create_scratch_buffer "undumphex"
     state.bufs.ascii = create_scratch_buffer "undumpascii"
+    state.bufs.hex = create_scratch_buffer "undumphex"
     state.bufs.format = create_scratch_buffer "undumpformat"
     vim.api.nvim_win_set_buf(state.wins.hex, state.bufs.hex)
     vim.api.nvim_win_set_buf(state.wins.ascii, state.bufs.ascii)
     vim.api.nvim_win_set_buf(state.wins.format, state.bufs.format)
 
     -- sizing
-    local total_height = vim.api.nvim_get_option "lines" - vim.o.cmdheight
+    local total_height = vim.api.nvim_get_option_value("lines", {}) - vim.o.cmdheight
     local bottom_h = math.max(3, math.floor(total_height * (1 - (cfg.ui.top_ratio or 0.7))))
     vim.api.nvim_win_set_height(state.wins.format, bottom_h)
 
-    local total_width = vim.api.nvim_get_option "columns"
+    -- local total_width = vim.api.nvim_get_option "columns"
+    local total_width = vim.api.nvim_get_option_value("columns", {})
     local hex_w = math.floor(total_width * (cfg.ui.column_ratio or 0.55))
     vim.api.nvim_win_set_width(state.wins.hex, hex_w)
 end
@@ -105,8 +110,8 @@ end
 ---@return nil
 local function render_all()
     local cfg = Config.get()
-    HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
     AsciiView.render(state.bufs.ascii, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
+    HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
 
     local ok, result = pcall(function()
         return Decode.decode(state.path, state.bytes)
@@ -164,11 +169,11 @@ M.toggle = function(which)
     cfg.ui[flag_key] = not cfg.ui[flag_key]
     if cfg.ui[flag_key] then
         vim.api.nvim_win_set_config(win, { hide = false })
-        vim.api.nvim_win_set_option(win, "winhighlight", "")
+        vim.api.nvim_set_option_value("winhighlight", "", { win = win })
     else
         -- dim and wipe content
         vim.api.nvim_buf_set_lines(state.bufs[which], 0, -1, false, { "[" .. which .. " hidden ]" })
-        vim.api.nvim_win_set_option(win, "winhighlight", "Normal:Folded")
+        vim.api.nvim_set_option_value("winhighlight", "Normal:Folded", { win = win })
     end
 end
 

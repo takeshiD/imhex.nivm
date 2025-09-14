@@ -29,7 +29,8 @@ local function build_lines(bytes, bytes_per_row)
             end
         end
         local addr = string.format("%08X", offset)
-        lines[#lines + 1] = addr .. "  " .. table.concat(row_chars)
+        -- lines[#lines + 1] = addr .. "  " .. table.concat(row_chars)
+        lines[#lines + 1] = table.concat(row_chars)
         offset = offset + bytes_per_row
     end
     return lines
@@ -41,9 +42,9 @@ end
 M.render = function(buf, bytes, opts)
     local bpr = (opts and opts.bytes_per_row) or 16
     local lines = build_lines(bytes or "", bpr)
-    vim.api.nvim_buf_set_option(buf, "modifiable", true)
+    vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.api.nvim_buf_set_option(buf, "modifiable", false)
+    vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
 end
 
 return M
