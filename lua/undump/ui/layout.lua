@@ -122,10 +122,13 @@ local function render_all()
     -- Render byte views
     AsciiView.render(state.bufs.ascii, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
     HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
-    -- Apply highlights to hex view based on decoded metadata (if available)
+    -- Apply highlights to hex/ascii views based on decoded metadata (if available)
     if HexView.highlight then
         Notify.warn("attempt to apply highlight")
         HexView.highlight(state.bufs.hex, result, { bytes_per_row = cfg.ui.bytes_per_row })
+    end
+    if AsciiView.highlight then
+        AsciiView.highlight(state.bufs.ascii, result, { bytes_per_row = cfg.ui.bytes_per_row })
     end
     -- Render structured decode result
     FormatView.render(state.bufs.format, result)
