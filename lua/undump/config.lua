@@ -6,8 +6,13 @@
 ---@field show_hex boolean
 ---@field show_format boolean
 
+---@class UndumpDecodeLimit
+---@field max_proto_depth integer?
+---@field max_protos_per_function integer?
+
 ---@class UndumpDecodeConfig
 ---@field prefer string[]  -- order matters; first matching decoder wins
+---@field limit UndumpDecodeLimit?
 
 ---@class UndumpConfig
 ---@field ui UndumpUiConfig
