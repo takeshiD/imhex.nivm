@@ -1,68 +1,52 @@
-local Config = require "undump.config"
-
----@alias UndumpDecoded table|string
+---@alias UndumpDecodedResult table|string
 
 ---@class UndumpDecoder
 ---@field name string
----@field match fun(bytes: string, path: string): boolean
----@field decode fun(bytes: string, path: string): UndumpDecoded
+---@field matcher fun(bytes: string, path: string): boolean
+---@field decoder fun(bytes: string, path: string): UndumpDecodedResult
 
 local M = {}
 
----@type UndumpDecoder[]
-local registry = {}
-
---- Register a decoder
----@param name string
----@param matcher fun(bytes: string, path: string): boolean
----@param decoder fun(bytes: string, path: string): UndumpDecoded
-M.register = function(name, matcher, decoder)
-    registry[#registry + 1] = { name = name, match = matcher, decode = decoder }
-end
-
----@return string[]
-M.list = function()
-    local names = {}
-    for _, d in ipairs(registry) do
-        names[#names + 1] = d.name
-    end
-    return names
-end
-
+---@private
+---@param decoders UndumpDecoder[]
+---@param prefer string[]
 ---@param path string
 ---@param bytes string
 ---@return UndumpDecoder|nil
-local function pick_decoder(path, bytes)
-    local cfg = Config.get()
+local function pick_decoder(decoders, prefer, path, bytes)
     -- First, try preferred decoders if they match
+    ---@type table<string, UndumpDecoder>
     local preferred = {}
-    for _, d in ipairs(registry) do
+    for _, d in ipairs(decoders) do
         preferred[d.name] = d
     end
-    for _, name in ipairs(cfg.decode.prefer or {}) do
+    for _, name in ipairs(prefer or {}) do
         local d = preferred[name]
-        if d and d.match(bytes, path) then
+        if d and d.matcher(bytes, path) then
             return d
         end
     end
     -- Fallback: first matching
-    for _, d in ipairs(registry) do
-        if d.match(bytes, path) then
+    for _, d in ipairs(decoders) do
+        if d.matcher(bytes, path) then
             return d
         end
     end
     return nil
 end
 
+---@param decoders UndumpDecoder[]
+---@param prefer string[]
 ---@param path string
 ---@param bytes string
----@return UndumpDecoded
-M.decode = function(path, bytes)
-    local d = pick_decoder(path, bytes)
+---@return UndumpDecodedResult
+---Interface for format decoder
+M.decode = function(decoders, prefer, path, bytes)
+    local d = pick_decoder(decoders, prefer, path, bytes)
     if not d then
         return { "No decoder matched. Registered: " .. table.concat(M.list(), ", ") }
     end
-    local ok, result = pcall(d.decode, bytes, path)
+    local ok, result = pcall(d.decoder, bytes, path)
     if not ok then
         return { "Decoder error [" .. d.name .. "]: " .. tostring(result) }
     end

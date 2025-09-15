@@ -1,0 +1,32 @@
+local Config = require "undump.config"
+local DecoderLua51 = require "undump.formatdecode.builtin.lua51"
+
+describe("undump.config", function()
+    it("default present", function()
+        Config.setup()
+        local cfg = Config.get()
+        assert.equals(type(cfg), "table")
+        assert.equals(type(cfg.ui), "table")
+        assert.equals(cfg.ui.bytes_per_row, 16)
+        assert.is_true(cfg.ui.show_ascii)
+        assert.is_true(cfg.ui.show_hex)
+        assert.is_true(cfg.ui.show_format)
+        assert.equals(type(cfg.decode), "table")
+        assert.equals(type(cfg.decode.prefer), "table")
+        assert.equals(cfg.decode.prefer[1], "lua51")
+    end)
+    it("override merdes shallow tables", function()
+        Config.setup { ui = { bytes_per_row = 8, show_ascii = false } }
+        local cfg = Config.get()
+        assert.equals(cfg.ui.bytes_per_row, 8)
+        assert.equals(cfg.ui.show_ascii, false)
+        assert.is_true(cfg.ui.show_hex)
+        assert.is_true(cfg.ui.show_format)
+    end)
+    it("override nested sections", function()
+        Config.setup { decode = { prefer = { "foo", "bar" } } }
+        local cfg = Config.get()
+        assert.equals(cfg.decode.prefer[1], "foo")
+        assert.equals(cfg.decode.prefer[2], "bar")
+    end)
+end)

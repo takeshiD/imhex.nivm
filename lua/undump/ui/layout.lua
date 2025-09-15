@@ -101,7 +101,6 @@ local function ensure_layout()
     local bottom_h = math.max(3, math.floor(total_height * (1 - (cfg.ui.top_ratio or 0.7))))
     vim.api.nvim_win_set_height(state.wins.format, bottom_h)
 
-    -- local total_width = vim.api.nvim_get_option "columns"
     local total_width = vim.api.nvim_get_option_value("columns", {})
     local hex_w = math.floor(total_width * (cfg.ui.column_ratio or 0.55))
     vim.api.nvim_win_set_width(state.wins.hex, hex_w)
@@ -113,7 +112,7 @@ local function render_all()
 
     -- Decode first so we can use the result to highlight the hex view
     local ok, result = pcall(function()
-        return Decode.decode(state.path, state.bytes)
+        return Decode.decode(cfg.decode.decoders, cfg.decode.prefer, state.path, state.bytes)
     end)
     if not ok then
         result = { "Decode error: " .. tostring(result) }
@@ -124,7 +123,6 @@ local function render_all()
     HexView.render(state.bufs.hex, state.bytes, { bytes_per_row = cfg.ui.bytes_per_row })
     -- Apply highlights to hex/ascii views based on decoded metadata (if available)
     if HexView.highlight then
-        Notify.warn("attempt to apply highlight")
         HexView.highlight(state.bufs.hex, result, { bytes_per_row = cfg.ui.bytes_per_row })
     end
     if AsciiView.highlight then

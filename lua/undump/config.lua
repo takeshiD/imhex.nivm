@@ -1,3 +1,4 @@
+local DecoderLua51 = require("undump.formatdecode.builtin.lua51")
 ---@class UndumpUiConfig
 ---@field top_ratio number  -- top area (hex+ascii) height ratio
 ---@field column_ratio number  -- hex:ascii width ratio
@@ -12,6 +13,7 @@
 
 ---@class UndumpDecodeConfig
 ---@field prefer string[]  -- order matters; first matching decoder wins
+---@field decoders table<string, UndumpDecoder>
 ---@field limit UndumpDecodeLimit?
 
 ---@class UndumpConfig
@@ -36,6 +38,9 @@ local defaults = {
     decode = {
         -- order matters; first matching decoder wins
         prefer = { "lua51" },
+        decoders = {
+            DecoderLua51,
+        },
     },
 }
 
